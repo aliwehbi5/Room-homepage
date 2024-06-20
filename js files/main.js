@@ -1,3 +1,4 @@
+// Selecting elements from the DOM
 const toggleIcons = document.querySelectorAll(".menu-icon, .close-icon");
 const mainUl = document.querySelector("header ul");
 const forwardBtn = document.querySelector(".forward-btn");
@@ -7,22 +8,18 @@ const bottom = document.querySelector(".bottom");
 const title = document.querySelector(".right-part h1");
 const description = document.querySelector("p.description");
 
-// Event listener for toggle icons
+// Adding click event listener to toggle icons
 toggleIcons.forEach((icon) => {
   icon.addEventListener("click", () => {
+    // Toggling the "shown" class for the mainUl element
     mainUl.classList.toggle("shown");
+    // Toggling the "active" class for the body element
     document.body.classList.toggle("active");
   });
 });
 
-// Event listener for forward button
-forwardBtn.addEventListener("click", handleForward);
-
-// Event listener for backward button
-backwardBtn.addEventListener("click", handleBackward);
-
-// Function to handle forward button click
-function handleForward() {
+// Adding click event listener to forward button
+forwardBtn.addEventListener("click", () => {
   let nextImg, fetchIndex;
   if (
     !document.querySelector(".in-img") &&
@@ -37,7 +34,9 @@ function handleForward() {
   imgs.forEach((img, index) => {
     img.classList.remove("index-1");
     if (img.classList.contains("in-img") || img.classList.contains("out-img")) {
-      img.classList.replace("in-img", "index-1");
+      // Moving the currently active image to the back
+      img.classList.remove("in-img");
+      img.classList.add("index-1");
       if (index === imgs.length - 1) {
         nextImg = imgs[0];
         fetchIndex = 0;
@@ -50,10 +49,10 @@ function handleForward() {
     }
   });
   nextImg.classList.add("in-img");
-}
+});
 
-// Function to handle backward button click
-function handleBackward() {
+// Adding click event listener to backward button
+backwardBtn.addEventListener("click", () => {
   let previousImg, fetchIndex;
   if (
     !document.querySelector(".in-img") &&
@@ -68,7 +67,9 @@ function handleBackward() {
   imgs.forEach((img, index) => {
     img.classList.remove("index-1");
     if (img.classList.contains("out-img") || img.classList.contains("in-img")) {
-      img.classList.replace("out-img", "index-1");
+      // Moving the currently active image to the front
+      img.classList.remove("out-img");
+      img.classList.add("index-1");
       if (index === 0) {
         previousImg = imgs[imgs.length - 1];
         fetchIndex = imgs.length - 1;
@@ -81,20 +82,23 @@ function handleBackward() {
     }
   });
   previousImg.classList.add("out-img");
-}
+});
 
 // Function to fetch data based on index
 function fetchData(index) {
   fetch("data.json")
     .then((response) => response.json())
     .then((data) => {
+      // Adding CSS classes for animation
       bottom.classList.add("go-right");
       title.classList.add("go-up");
       setTimeout(() => {
+        // Updating the title and description with fetched data
         title.textContent = data[index].h1Text;
         description.textContent = data[index].description;
       }, 500);
       setTimeout(() => {
+        // Removing CSS classes after animation
         bottom.classList.remove("go-right");
         title.classList.remove("go-up");
       }, 1000);
